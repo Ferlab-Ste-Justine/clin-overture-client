@@ -4,7 +4,12 @@ import hashlib
 
 HASH_CHUNK_SIZE=8192
 EXTENSION_TYPE_MAPPING = {
-    '.txt': 'TGZ'
+    '.txt': 'TXT',
+    '.html': 'HTML',
+    '.tsv': 'TSV',
+    '.csv': 'CSV',
+    '.cram': 'CRAM',
+    '.crai': 'CRAI'
 }
 
 def hash_path(file_path):
@@ -22,13 +27,3 @@ def get_file_metadata(file_path):
         'type': EXTENSION_TYPE_MAPPING[str.lower(extension)],
         'md5sum': hash_path(file_path)
     }
-
-def add_files_metadata(files_path, samples):
-    samples = copy.deepcopy(samples)
-    for submitter_id in samples:
-        samples[submitter_id] = list(map(
-            lambda filename: get_file_metadata(os.path.join(files_path, filename)), 
-            samples[submitter_id]
-        ))
-    return samples
-    

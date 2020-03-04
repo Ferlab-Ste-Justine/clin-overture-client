@@ -1,0 +1,40 @@
+{
+    "studyId": "ABC123",
+    "samples": [
+        {"submitterSampleId": "ssId1"}
+    ],
+    "files": [
+        {
+            "fileName": "file1.cram",
+            "dataType": "ReadAlignment"
+        },
+        {
+            "fileName": "file2.crai",
+            "dataType": "ReadAlignmentIndex"
+        },
+        {
+            "fileName": "file3.tsv",
+            "dataType": "coverageReport"
+        }
+    ],
+    "analysisType": {"name": "clinReadAlignment", "version": 1},
+    "experiment": {
+        "libraryStrategy": "WXS",
+        "libraryName": "a library name",
+        "libraryType": "Roche MedExome V3",
+        "aligned": true,
+        "alignmentTool": "Dragen v1.0",
+        "referenceGenome": "GRCh38 / hg38",
+        "pairedEnd": true,
+        "insertSize": 150,
+        "sequencingStrategy": "Miseq PE 2X150",
+        "sequencingId":"lsjii222jj2j2",
+        "runId": "393777373",
+        "runDate": "2020-05-14",
+        "totalReadsCount": 38838889393,
+        "readSupplementary": 282771,
+        "readDuplicates": 1881771,
+        "readMapped": 3093943094,
+        "readProperlyPaired": 39898989
+    }
+}
