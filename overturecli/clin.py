@@ -1,5 +1,45 @@
-import elasticsearch
+import os
+from elasticsearch import Elasticsearch
 
-#TODO: Implement
-def expand_related_entities(elasticsearch_url, samples):
-    return samples
+def _get_patient_submitter_id(result):
+    try:
+        return result['identifier']['JHN']
+    except KeyError:
+        return "{organization}_{mr}".format(
+            organization=result['organization']['alias'],
+            mr=result['identifier']['MR']
+        )
+
+def get_sample_related_entities(elasticsearch_url, submitterSampleId):
+    es = Elasticsearch([elasticsearch_url])
+    res = es.search(
+        index="patient", 
+        body={"query": { "match": { "samples.container":  submitterSampleId }}}
+    )
+    if len(res['hits']['hits']) > 0:
+        result = res['hits']['hits'][0]['_source']
+        sample = list(filter(
+            lambda sample: sample['container'][0]==submitterSampleId, 
+            result['samples']
+        ))[0]
+        sample_speciment = list(filter(
+            lambda specimen: specimen['id'] == sample['parent']['id'],
+            result['specimens']
+        ))[0]
+        return {
+            'submitterSampleId': submitterSampleId,
+            'sampleType': sample['type']['text'],
+            'specimen': {
+                'submitterSpecimenId': sample_speciment['container'][0],
+                'specimenType': sample_speciment['type']['text'],
+                'specimenTissueSource': 'Blood derived',
+                'tumourNormalDesignation': 'Normal'
+            },
+            'donor': {
+                'submitterDonorId': _get_patient_submitter_id(result),
+                'studyId': result['studies'][0]['id'],
+                'gender': result['gender'].capitalize()
+            }
+        }
+    else:
+        raise Exception("submitterSampleId {submitterSampleId} cannot be found in Elasticsearch".format(submitterSampleId=submitterSampleId))
