@@ -52,6 +52,16 @@ class SubmittedAnalysis(Schema):
         Sample(only=("submitterSampleId",))
     ), required=True)
 
+class UploadAnalysis(Schema):
+    studyId = NonEmptyString
+    analysisType = fields.Nested(AnalysisType(), required=True)
+    files = fields.List(fields.Nested(
+        FileMetadata()
+    ), required=True)
+    samples = fields.List(fields.Nested(
+        Sample()
+    ), required=True)
+
 class ClinReadAlignment(Schema):
     libraryStrategy = NonEmptyString
     libraryName = NonEmptyString
@@ -72,4 +82,7 @@ class ClinReadAlignment(Schema):
     readProperlyPaired = ReqPosInt
 
 class SubmittedClinReadAlignmentAnalysis(SubmittedAnalysis):
+    experiment = fields.Nested(ClinReadAlignment(), required=True)
+
+class UploadClinReadAlignmentAnalysis(UploadAnalysis):
     experiment = fields.Nested(ClinReadAlignment(), required=True)

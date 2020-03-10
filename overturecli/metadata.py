@@ -3,7 +3,12 @@ import csv
 import json
 import os
 from datetime import datetime
-from .schemas import SubmittedClinReadAlignmentAnalysis, FileMetadata, Sample
+from .schemas import (
+    SubmittedClinReadAlignmentAnalysis,
+    UploadClinReadAlignmentAnalysis,
+    FileMetadata, 
+    Sample
+)
 from .files_metadata import get_file_metadata
 from .clin import get_sample_related_entities
 
@@ -36,4 +41,7 @@ def join_metadata(files_metadata, samples_metadata, analysis_metadata):
     analysis_metadata['samples'] = samples_metadata
     analysis_metadata['files'] = files_metadata
     return analysis_metadata
+
+def analysis_upload_to_json(upload_analysis):
+    return UploadClinReadAlignmentAnalysis().dumps(upload_analysis)
 

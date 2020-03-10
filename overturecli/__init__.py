@@ -1,11 +1,14 @@
 import click
+import json
 import os
 import pprint
 
+from keycloak import KeyCloakClient
 
 import overturecli.metadata as metadata
 import overturecli.files_metadata as files_metadata
 import overturecli.clin as clin
+import overturecli.song_calls as song_calls
 
 PP = pprint.PrettyPrinter(indent=4)
 
@@ -14,15 +17,85 @@ def cli():
     pass
 
 @click.command()
+@click.option('--id', type=click.STRING, help='ID of the study to create')
+@click.option('--name', type=click.STRING, help='Name of the study to create')
+@click.option('--description', type=click.STRING, help='Description of the study to create')
+@click.option('--organization', type=click.STRING, help='Organization of the study to create')
+@click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
+@click.option('--auth-token', type=click.STRING, envvar='AUTH_TOKEN', help='Authentication token')
+def create_study(
+    id,
+    name,
+    description,
+    organization,
+    song_url,
+    auth_token
+):
+    song_calls.create_study(
+        id,
+        name,
+        description,
+        organization,
+        song_url,
+        auth_token
+    )
+
+@click.command()
+@click.option('--keycloak-url', type=click.STRING, envvar='KEYCLOAK_URL', help='Keycloak connection string')
+@click.option('--keycloak-username', type=click.STRING, envvar='KEYCLOAK_USERNAME', help='Keycloak username')
+@click.option('--keycloak-password', type=click.STRING, envvar='KEYCLOAK_PASSWORD', help='Keycloak password')
+@click.option('--keycloak-secret', type=click.STRING, envvar='KEYCLOAK_SECRET', help='Keycloak secret')
+def keycloak_login(
+    keycloak_url,
+    keycloak_username,
+    keycloak_password,
+    keycloak_secret
+):
+    token = KeyCloakClient(
+        '{keycloak_url}/auth/realms/{keycloak_realm}'.format(
+            keycloak_url=keycloak_url,
+            keycloak_realm='clin'
+        ),
+        'clin-proxy-api',
+        keycloak_secret
+    ).login(
+        keycloak_username, 
+        keycloak_password
+    )
+    click.echo(token)
+
+@click.command()
 @click.option('--upload-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True), envvar='UPLOAD_DIR', help='Path containing the metadata and files to upload')
 @click.option('--elasticsearch-url', type=click.STRING, envvar='ELASTICSEARCH_URL', help='Elasticsearch connection string')
-@click.option('--overture-auth-token', type=click.STRING, envvar='OVERTURE_AUTH_TOKEN', help='Token to use when uploading to the overture stack')
-def batch_upload(upload_dir, elasticsearch_url):
+@click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
+@click.option('--auth-token', type=click.STRING, envvar='AUTH_TOKEN', help='Authentication token')
+def batch_upload(
+    upload_dir, 
+    elasticsearch_url,
+    song_url,
+    auth_token
+):
     submitted_metadata = metadata.get_submission_metadata(upload_dir)
     for analysis_metadata in submitted_metadata:
         files_metadata = metadata.get_submission_files_metadata(upload_dir, analysis_metadata)
         samples_metadata = metadata.get_sample_related_metadata(elasticsearch_url, analysis_metadata)
         filled_analysis_metadata = metadata.join_metadata(files_metadata, samples_metadata, analysis_metadata)
-        PP.pprint(filled_analysis_metadata)
+        study_id = filled_analysis_metadata['studyId']
+        analysis_id = song_calls.upload(
+            study_id,
+            metadata.analysis_upload_to_json(filled_analysis_metadata), 
+            song_url, 
+            auth_token
+        )
+        song_calls.create_manifest(
+            files_dir,
+            manifest_dir,
+            study_id,
+            analysis_id,
+            song_url,
+            auth_token
+        )
 
+cli.add_command(create_study)
+cli.add_command(keycloak_login)
 cli.add_command(batch_upload)
