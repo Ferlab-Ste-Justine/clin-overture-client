@@ -6,11 +6,20 @@ import pprint
 from keycloak import KeyCloakClient
 
 import overturecli.metadata as metadata
-import overturecli.files_metadata as files_metadata
-import overturecli.clin as clin
 import overturecli.song_calls as song_calls
+import overturecli.store as store
 
 PP = pprint.PrettyPrinter(indent=4)
+
+def get_auth_token():
+    env_token = os.environ.get('AUTH_TOKEN', None)
+    if env_token is None:
+        store_token = store.get_auth_token()
+        if store_token is None:
+            raise Exception("Auth token is necessary, but not specified")
+        return store_token
+    else:
+        return env_token
 
 @click.group()
 def cli():
@@ -22,7 +31,7 @@ def cli():
 @click.option('--description', type=click.STRING, help='Description of the study to create')
 @click.option('--organization', type=click.STRING, help='Organization of the study to create')
 @click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
-@click.option('--auth-token', type=click.STRING, envvar='AUTH_TOKEN', help='Authentication token')
+@click.option('--auth-token', type=click.STRING, default=get_auth_token, help='Authentication token')
 def create_study(
     id,
     name,
@@ -62,13 +71,13 @@ def keycloak_login(
         keycloak_username, 
         keycloak_password
     )
-    click.echo(token)
+    store.store_auth_token(token)
 
 @click.command()
 @click.option('--upload-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True), envvar='UPLOAD_DIR', help='Path containing the metadata and files to upload')
 @click.option('--elasticsearch-url', type=click.STRING, envvar='ELASTICSEARCH_URL', help='Elasticsearch connection string')
 @click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
-@click.option('--auth-token', type=click.STRING, envvar='AUTH_TOKEN', help='Authentication token')
+@click.option('--auth-token', type=click.STRING, default=get_auth_token, help='Authentication token')
 def batch_upload(
     upload_dir, 
     elasticsearch_url,
