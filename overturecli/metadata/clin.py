@@ -1,15 +1,6 @@
 import os
 from elasticsearch import Elasticsearch
 
-def _get_patient_submitter_id(result):
-    try:
-        return result['identifier']['JHN']
-    except KeyError:
-        return "{organization}_{mr}".format(
-            organization=result['organization']['alias'],
-            mr=result['identifier']['MR']
-        )
-
 def get_sample_related_entities(elasticsearch_url, submitterSampleId):
     es = Elasticsearch([elasticsearch_url])
     res = es.search(
@@ -36,7 +27,7 @@ def get_sample_related_entities(elasticsearch_url, submitterSampleId):
                 'tumourNormalDesignation': 'Normal'
             },
             'donor': {
-                'submitterDonorId': _get_patient_submitter_id(result),
+                'submitterDonorId': result['id'],
                 'studyId': result['studies'][0]['id'],
                 'gender': result['gender'].capitalize()
             }
