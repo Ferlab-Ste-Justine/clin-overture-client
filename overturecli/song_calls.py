@@ -1,4 +1,6 @@
 import os
+import json
+import click
 
 from song import SongClient
 
@@ -14,12 +16,31 @@ def create_study(
         song_url,
         auth_token
     )
-    song_client.create_study(
-        id,
-        name,
-        description,
-        organization
+    if not id in song_client.get_studies_list():
+        song_client.create_study(
+            id,
+            name,
+            description,
+            organization
+        )
+    else:
+        click.echo('study already present. Skipping creation.')
+
+def create_analysis_definition(
+    schema,
+    song_url,
+    auth_token
+):
+    song_client = SongClient(
+        song_url,
+        auth_token
     )
+        
+    schemas = song_client.get_schemas()
+    if not schema['name'] in [result.name for result in schemas.resultSet]:
+        song_client.create_schema(json.dumps(schema))
+    else:
+        click.echo('analysis already present. Skipping creation.')
 
 def upload(studyId, payload, song_url, auth_token):
     song_client = SongClient(

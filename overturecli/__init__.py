@@ -26,6 +26,22 @@ def cli():
     pass
 
 @click.command()
+@click.option('--schema-path', type=click.Path(exists=True, file_okay=True, dir_okay=False), help='Path to schema')
+@click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
+@click.option('--auth-token', type=click.STRING, default=get_auth_token, help='Authentication token')
+def create_analysis_definition(
+    schema_path,
+    song_url,
+    auth_token
+):
+    with open(schema_path) as schema_file:
+        song_calls.create_analysis_definition(
+            json.load(schema_file),
+            song_url,
+            auth_token
+        )
+
+@click.command()
 @click.option('--id', type=click.STRING, help='ID of the study to create')
 @click.option('--name', type=click.STRING, help='Name of the study to create')
 @click.option('--description', type=click.STRING, help='Description of the study to create')
@@ -105,6 +121,7 @@ def batch_upload(
             auth_token
         )
 
+cli.add_command(create_analysis_definition)
 cli.add_command(create_study)
 cli.add_command(keycloak_login)
 cli.add_command(batch_upload)
