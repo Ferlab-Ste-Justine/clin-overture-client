@@ -17,15 +17,15 @@ class FileMetadata(Schema):
     dataType = fields.Str(required=True)
 
 class Specimen(Schema):
-    specimenId = fields.Str(default=None)
-    donorId = fields.Str(default=None)
+    specimenId = fields.Str(default=None, missing=None)
+    donorId = fields.Str(default=None, missing=None)
     submitterSpecimenId = NonEmptyString
     specimenType = NonEmptyString
     specimenTissueSource = NonEmptyString
     tumourNormalDesignation = NonEmptyString
 
 class Donor(Schema):
-    donorId = fields.Str(default=None)
+    donorId = fields.Str(default=None, missing=None)
     submitterDonorId = fields.Str(required=True)
     studyId = fields.Str(required=True)
     gender = fields.Str(
@@ -34,10 +34,10 @@ class Donor(Schema):
     )
 
 class Sample(Schema):
-    sampleId = fields.Str(default=None)
-    specimenId = fields.Str(default=None)
+    sampleId = fields.Str(default=None, missing=None)
+    specimenId = fields.Str(default=None, missing=None)
     submitterSampleId = fields.Str(required=True)
-    matchedNormalSubmitterSampleId = fields.Str(default=None),
+    matchedNormalSubmitterSampleId = fields.Str(default=None, missing=None),
     sampleType = fields.Str(required=True)
     specimen = fields.Nested(Specimen(), required=True)
     donor = fields.Nested(Donor(), required=True)
