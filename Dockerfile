@@ -1,8 +1,12 @@
 FROM python:3.8
 
-COPY . /opt/
-
 WORKDIR /opt
+
+COPY setup.py /opt/
+
+RUN python setup.py egg_info && pip install -r *.egg-info/requires.txt
+
+COPY . /opt/
 
 RUN cd overture-python-sdk && python setup.py install
 
