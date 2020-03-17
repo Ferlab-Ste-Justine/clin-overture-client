@@ -37,7 +37,7 @@ class Sample(Schema):
     sampleId = fields.Str(default=None, missing=None)
     specimenId = fields.Str(default=None, missing=None)
     submitterSampleId = fields.Str(required=True)
-    matchedNormalSubmitterSampleId = fields.Str(default=None, missing=None),
+    matchedNormalSubmitterSampleId = fields.Str(default=None, missing=None)
     sampleType = fields.Str(required=True)
     specimen = fields.Nested(Specimen(), required=True)
     donor = fields.Nested(Donor(), required=True)
