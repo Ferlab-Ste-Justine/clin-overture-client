@@ -22,8 +22,8 @@ def get_sample_related_entities(elasticsearch_url, submitterSampleId):
             'sampleType': sample['type']['text'],
             'specimen': {
                 'submitterSpecimenId': sample_speciment['container'][0],
-                'specimenType': sample_speciment['type']['text'],
-                'specimenTissueSource': 'Blood derived',
+                'specimenType': 'Normal',
+                'specimenTissueSource': sample_speciment['type']['text'],
                 'tumourNormalDesignation': 'Normal'
             },
             'donor': {
