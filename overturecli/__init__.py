@@ -101,17 +101,24 @@ def batch_upload(
     auth_token
 ):
     submitted_metadata = metadata.get_submission_metadata(upload_dir)
-    for analysis_metadata in submitted_metadata:
-        files_metadata = metadata.get_submission_files_metadata(upload_dir, analysis_metadata)
-        samples_metadata = metadata.get_sample_related_metadata(elasticsearch_url, analysis_metadata)
-        filled_analysis_metadata = metadata.join_metadata(files_metadata, samples_metadata, analysis_metadata)
-        study_id = filled_analysis_metadata['studyId']
-        analysis_id = song_calls.upload(
-            study_id,
-            metadata.analysis_upload_to_json(filled_analysis_metadata), 
-            song_url, 
-            auth_token
-        )
+    for index, analysis_metadata in enumerate(submitted_metadata, start=0):
+        stored_analysis = store.find_or_insert_analysis(index, upload_dir)
+        if not stored_analysis['created']:
+            files_metadata = metadata.get_submission_files_metadata(upload_dir, analysis_metadata)
+            samples_metadata = metadata.get_sample_related_metadata(elasticsearch_url, analysis_metadata)
+            filled_analysis_metadata = metadata.join_metadata(files_metadata, samples_metadata, analysis_metadata)
+            study_id = filled_analysis_metadata['studyId']
+            analysis_id = song_calls.upload(
+                study_id,
+                metadata.analysis_upload_to_json(filled_analysis_metadata), 
+                song_url, 
+                auth_token
+            )
+            store.save_analysis_creation(index, upload_dir, analysis_id)
+        else:
+            analysis_id = stored_analysis['id']
+            click.echo("analysis {analysis_id} already exists. Skipping creation.".format(analysis_id=analysis_id))
+
         song_calls.create_manifest(
             files_dir,
             manifest_dir,

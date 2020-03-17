@@ -1,4 +1,11 @@
 docker build -t overture-clin-client:latest .;
+
+WORKSPACE=$(pwd)/workspace
+if [ ! -d "$WORKING_DIR" ]; then 
+    mkdir -p $WORKSPACE
+    cp -r example $WORKSPACE/example
+fi
+
 docker run -it --rm \
            --network overture \
            -e "ELASTICSEARCH_URL=http://elasticsearch:9200" \
@@ -6,5 +13,7 @@ docker run -it --rm \
            -e "KEYCLOAK_URL=https://keycloak:8443" \
            -e "KEYCLOAK_USERNAME=test" \
            -e "KEYCLOAK_PASSWORD=testpassword99" \
-           -e "KEYCLOAK_SECRET=01729864-1f9f-4d16-b728-2fa87767541c" \
+           -e "KEYCLOAK_SECRET=8c06ee4d-461b-45a9-b50f-1ed176699c1b" \
+           -v $WORKSPACE:/opt/workspace \
+           -w /opt/workspace \
            overture-clin-client:latest bash;

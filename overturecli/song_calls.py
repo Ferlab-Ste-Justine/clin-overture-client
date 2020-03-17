@@ -51,7 +51,7 @@ def upload(studyId, payload, song_url, auth_token):
         studyId,
         payload
     )
-    return response.analysisId
+    return response['analysisId']
 
 def create_manifest(
     upload_dir, 
