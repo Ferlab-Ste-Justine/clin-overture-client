@@ -12,6 +12,10 @@ import overturecli.store as store
 
 PP = pprint.PrettyPrinter(indent=4)
 
+#import logging
+#songLogger = logging.getLogger('song')
+#songLogger.setLevel(10)
+
 def get_auth_token():
     env_token = os.environ.get('AUTH_TOKEN', None)
     if env_token is None:
@@ -91,7 +95,7 @@ def keycloak_login(
     store.store_auth_token(token)
 
 @click.command()
-@click.option('--upload-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True), envvar='UPLOAD_DIR', help='Path containing the metadata and files to upload')
+@click.option('--upload-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True), envvar='UPLOAD_DIR', help='Path containing the metadata and files to upload')
 @click.option('--elasticsearch-url', type=click.STRING, envvar='ELASTICSEARCH_URL', help='Elasticsearch connection string')
 @click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
 @click.option('--score-url', type=click.STRING, envvar='SCORE_URL', help='Score url')

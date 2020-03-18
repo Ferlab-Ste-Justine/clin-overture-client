@@ -10,12 +10,14 @@ docker run -it --rm \
            --network overture \
            -e "ELASTICSEARCH_URL=http://elasticsearch:9200" \
            -e "SONG_URL=http://song-reverse-proxy:8888" \
+           -e "SCORE_URL=http://score-reverse-proxy:8888" \
            -e "KEYCLOAK_URL=https://keycloak:8443" \
            -e "KEYCLOAK_USERNAME=test" \
            -e "KEYCLOAK_PASSWORD=testpassword99" \
            -e "KEYCLOAK_SECRET=8c06ee4d-461b-45a9-b50f-1ed176699c1b" \
            -e "SCORE_CLIENT_IMAGE=overture-dev_storage-client:latest" \
            -e "CONTAINER_NAME=overture-client" \
+           -e "OVERTURE_NETWORK=overture" \
            -v $WORKSPACE:/opt/workspace \
            -v /var/run/docker.sock:/var/run/docker.sock \
            -w /opt/workspace \
