@@ -18,6 +18,7 @@ docker run -it --rm \
            -e "SCORE_CLIENT_IMAGE=overture-dev_storage-client:latest" \
            -e "CONTAINER_NAME=overture-client" \
            -e "OVERTURE_NETWORK=overture" \
+           -e "MAIN_STUDY=ET00011" \
            -v $WORKSPACE:/opt/workspace \
            -v /var/run/docker.sock:/var/run/docker.sock \
            -w /opt/workspace \

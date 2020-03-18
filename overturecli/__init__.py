@@ -12,10 +12,6 @@ import overturecli.store as store
 
 PP = pprint.PrettyPrinter(indent=4)
 
-#import logging
-#songLogger = logging.getLogger('song')
-#songLogger.setLevel(10)
-
 def get_auth_token():
     env_token = os.environ.get('AUTH_TOKEN', None)
     if env_token is None:
@@ -95,6 +91,25 @@ def keycloak_login(
     store.store_auth_token(token)
 
 @click.command()
+@click.option('--study-id', type=click.STRING, envvar='MAIN_STUDY', help='ID of the analyses study')
+@click.option('--publication-status', type=click.Choice(['PUBLISHED', 'UNPUBLISHED'], case_sensitive=False), default='PUBLISHED', help='Whether to get published or unpublished analyses')
+@click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
+@click.option('--auth-token', type=click.STRING, default=get_auth_token, help='Authentication token')
+def show_analyses(
+    study_id,
+    publication_status,
+    song_url,
+    auth_token
+):
+    analyses = song_calls.get_analyses(
+        study_id,
+        publication_status,
+        song_url,
+        auth_token
+    )
+    click.echo(json.dumps(analyses, indent=4, sort_keys=True))
+
+@click.command()
 @click.option('--upload-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True), envvar='UPLOAD_DIR', help='Path containing the metadata and files to upload')
 @click.option('--elasticsearch-url', type=click.STRING, envvar='ELASTICSEARCH_URL', help='Elasticsearch connection string')
 @click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
@@ -144,7 +159,15 @@ def batch_upload(
         else:
             click.echo("Files for analysis {analysis_id} already uploaded. Skipping upload.".format(analysis_id=analysis_id))
 
+        if not stored_analysis['published']:
+            song_calls.publish_analysis(analysis_metadata['studyId'], analysis_id, song_url, auth_token)
+            store.save_analysis_publication(index, upload_dir)
+        else:
+            click.echo("Files for analysis {analysis_id} already published. Skipping publication.".format(analysis_id=analysis_id))
+
+
 cli.add_command(create_analysis_definition)
 cli.add_command(create_study)
 cli.add_command(keycloak_login)
+cli.add_command(show_analyses)
 cli.add_command(batch_upload)

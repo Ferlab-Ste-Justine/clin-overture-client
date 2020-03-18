@@ -79,3 +79,17 @@ def create_manifest(
         os.path.join(manifest_dir, 'manifest.txt'),
         overwrite=True
     )
+
+def get_analyses(study_id, status, song_url, auth_token):
+    song_client = SongClient(
+        song_url,
+        auth_token
+    )
+    return song_client.get_analyses(study_id, status)
+
+def publish_analysis(study_id, analysis_id, song_url, auth_token):
+    song_client = SongClient(
+        song_url,
+        auth_token
+    )
+    song_client.publish_analysis(study_id, analysis_id)
