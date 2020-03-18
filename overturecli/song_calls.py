@@ -1,4 +1,5 @@
 import os
+import shutil
 import json
 import click
 
@@ -71,11 +72,10 @@ def create_manifest(
         analysis_id, 
         files_dir
     )
-    try:
-        os.makedirs(manifest_dir)
-    except OSError as e:
-        pass
+    if os.path.isdir(manifest_dir):
+        shutil.rmtree(manifest_dir)
+    os.makedirs(manifest_dir)
     manifest.write(
-        manifest_dir,
+        os.path.join(manifest_dir, 'manifest.txt'),
         overwrite=True
     )

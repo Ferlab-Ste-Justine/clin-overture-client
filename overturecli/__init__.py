@@ -7,6 +7,7 @@ from keycloak import KeyCloakClient
 
 import overturecli.metadata as metadata
 import overturecli.song_calls as song_calls
+import overturecli.score_calls as score_calls
 import overturecli.store as store
 
 PP = pprint.PrettyPrinter(indent=4)
@@ -93,11 +94,13 @@ def keycloak_login(
 @click.option('--upload-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True), envvar='UPLOAD_DIR', help='Path containing the metadata and files to upload')
 @click.option('--elasticsearch-url', type=click.STRING, envvar='ELASTICSEARCH_URL', help='Elasticsearch connection string')
 @click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
+@click.option('--score-url', type=click.STRING, envvar='SCORE_URL', help='Score url')
 @click.option('--auth-token', type=click.STRING, default=get_auth_token, help='Authentication token')
 def batch_upload(
     upload_dir, 
     elasticsearch_url,
     song_url,
+    score_url,
     auth_token
 ):
     submitted_metadata = metadata.get_submission_metadata(upload_dir)
@@ -117,16 +120,25 @@ def batch_upload(
             store.save_analysis_creation(index, upload_dir, analysis_id)
         else:
             analysis_id = stored_analysis['id']
-            click.echo("analysis {analysis_id} already exists. Skipping creation.".format(analysis_id=analysis_id))
+            click.echo("Analysis {analysis_id} already exists. Skipping creation.".format(analysis_id=analysis_id))
 
-        song_calls.create_manifest(
-            files_dir,
-            manifest_dir,
-            study_id,
-            analysis_id,
-            song_url,
-            auth_token
-        )
+        if not stored_analysis['files_uploaded']:
+            song_calls.create_manifest(
+                upload_dir,
+                analysis_metadata['studyId'],
+                analysis_id,
+                song_url,
+                auth_token
+            )
+            score_calls.upload_files(
+                upload_dir,
+                song_url,
+                score_url,
+                auth_token
+            )
+            store.save_analysis_files_upload(index, upload_dir)
+        else:
+            click.echo("Files for analysis {analysis_id} already uploaded. Skipping upload.".format(analysis_id=analysis_id))
 
 cli.add_command(create_analysis_definition)
 cli.add_command(create_study)

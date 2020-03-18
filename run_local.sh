@@ -14,6 +14,10 @@ docker run -it --rm \
            -e "KEYCLOAK_USERNAME=test" \
            -e "KEYCLOAK_PASSWORD=testpassword99" \
            -e "KEYCLOAK_SECRET=8c06ee4d-461b-45a9-b50f-1ed176699c1b" \
+           -e "SCORE_CLIENT_IMAGE=overture-dev_storage-client:latest" \
+           -e "CONTAINER_NAME=overture-client" \
            -v $WORKSPACE:/opt/workspace \
+           -v /var/run/docker.sock:/var/run/docker.sock \
            -w /opt/workspace \
+           --name overture-client \
            overture-clin-client:latest bash;

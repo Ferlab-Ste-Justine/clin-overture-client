@@ -56,7 +56,7 @@ def save_analysis_creation(index, upload_dir, id):
     )
     close_store_connection(conn)
 
-def save_analysis_file_upload(index, upload_dir):
+def save_analysis_files_upload(index, upload_dir):
     conn = get_store_connection()
     conn.execute(
         "UPDATE analysis SET files_uploaded = 1 WHERE metadata_list_index = ? AND upload_dir = ?;",
