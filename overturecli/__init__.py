@@ -110,6 +110,27 @@ def show_analyses(
     click.echo(json.dumps(analyses, indent=4, sort_keys=True))
 
 @click.command()
+@click.option('--download-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True), required=True, help='Path where the file should be downloaded. Note that it will not work if the path is not in a volume of the container the client is running in.')
+@click.option('--file-object-id', type=click.STRING, required=True, help='Object id of the file')
+@click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
+@click.option('--score-url', type=click.STRING, envvar='SCORE_URL', help='Score url')
+@click.option('--auth-token', type=click.STRING, default=get_auth_token, help='Authentication token')
+def download_file(
+    download_dir,
+    file_object_id,
+    song_url,
+    score_url,
+    auth_token
+):
+    score_calls.download_file(
+        download_dir,
+        file_object_id,
+        song_url,
+        score_url,
+        auth_token
+    )
+
+@click.command()
 @click.option('--upload-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True), envvar='UPLOAD_DIR', help='Path containing the metadata and files to upload')
 @click.option('--elasticsearch-url', type=click.STRING, envvar='ELASTICSEARCH_URL', help='Elasticsearch connection string')
 @click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
@@ -170,4 +191,5 @@ cli.add_command(create_analysis_definition)
 cli.add_command(create_study)
 cli.add_command(keycloak_login)
 cli.add_command(show_analyses)
+cli.add_command(download_file)
 cli.add_command(batch_upload)
