@@ -1,8 +1,12 @@
+import json
 from setuptools import setup, find_packages
 
+with open('info.json', 'r') as info_file:
+    INFO = json.load(info_file)
+
 setup(
-    name='overturecli',
-    version='0.1',
+    name=INFO['name'],
+    version=INFO['version'],
     packages=find_packages(),
     install_requires=[
         'Click==7.0',

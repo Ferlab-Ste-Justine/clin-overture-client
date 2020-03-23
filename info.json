@@ -1,0 +1,5 @@
+{
+    "version": "0.1",
+    "name": "overturecli",
+    "image_repo": "chusj/overture-client"
+}
