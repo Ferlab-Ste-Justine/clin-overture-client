@@ -25,7 +25,7 @@ export SONG_URL=${SONG_URL:-http://song-reverse-proxy:8888}
 export SCORE_URL=${SCORE_URL:-http://score-reverse-proxy:8888} 
 export KEYCLOAK_URL=${KEYCLOAK_URL:-https://keycloak:8443}
 export MAIN_STUDY=${MAIN_STUDY:-ET00011}
-export SCORE_CLIENT_IMAGE=${SCORE_CLIENT_IMAGE:-chusj/overture-score:0.3}
+export SCORE_CLIENT_IMAGE=${SCORE_CLIENT_IMAGE:-chusj/score-client:0.3}
 export CONTAINER_NAME=${CONTAINER_NAME:-overture-client}
 
 docker run -it --rm \
