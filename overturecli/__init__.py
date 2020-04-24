@@ -1,7 +1,12 @@
+import os
+import logging
+
 import click
 import json
-import os
 import pprint
+
+logging.basicConfig(level=os.environ.get("OVERTURE_CLI_LOG_LEVEL", "INFO"))
+PP = pprint.PrettyPrinter(indent=4)
 
 from keycloak import KeyCloakClient
 
@@ -10,7 +15,6 @@ import overturecli.song_calls as song_calls
 import overturecli.score_calls as score_calls
 import overturecli.store as store
 
-PP = pprint.PrettyPrinter(indent=4)
 
 def get_auth_token():
     env_token = os.environ.get('AUTH_TOKEN', None)
@@ -148,8 +152,7 @@ def batch_upload(
         stored_analysis = store.find_or_insert_analysis(index, upload_dir)
         if not stored_analysis['created']:
             files_metadata = metadata.get_submission_files_metadata(upload_dir, analysis_metadata)
-            samples_metadata = metadata.get_sample_related_metadata(elasticsearch_url, analysis_metadata)
-            filled_analysis_metadata = metadata.join_metadata(files_metadata, samples_metadata, analysis_metadata)
+            filled_analysis_metadata = metadata.integrate_metadata(files_metadata, analysis_metadata)
             study_id = filled_analysis_metadata['studyId']
             analysis_id = song_calls.upload(
                 study_id,

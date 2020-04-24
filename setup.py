@@ -11,7 +11,6 @@ setup(
     install_requires=[
         'Click==7.0',
         'docker==4.2.0',
-        'elasticsearch==6.4.0',
         'marshmallow==3.5.0'
     ],
     entry_points='''
