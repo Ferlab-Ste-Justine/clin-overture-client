@@ -136,13 +136,11 @@ def download_file(
 
 @click.command()
 @click.option('--upload-dir', type=click.Path(exists=True, file_okay=False, dir_okay=True, resolve_path=True), envvar='UPLOAD_DIR', help='Path containing the metadata and files to upload')
-@click.option('--elasticsearch-url', type=click.STRING, envvar='ELASTICSEARCH_URL', help='Elasticsearch connection string')
 @click.option('--song-url', type=click.STRING, envvar='SONG_URL', help='SONG url')
 @click.option('--score-url', type=click.STRING, envvar='SCORE_URL', help='Score url')
 @click.option('--auth-token', type=click.STRING, default=get_auth_token, help='Authentication token')
 def batch_upload(
     upload_dir, 
-    elasticsearch_url,
     song_url,
     score_url,
     auth_token

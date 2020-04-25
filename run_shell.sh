@@ -20,7 +20,6 @@ fi
 
 #Define defaults based on implicit local environment values if parameters are not passed
 export OVERTURE_NETWORK=${OVERTURE_NETWORK:-overture}
-export ELASTICSEARCH_URL=${ELASTICSEARCH_URL:-http://elastic:9200}
 export SONG_URL=${SONG_URL:-http://song-reverse-proxy:8888}
 export SCORE_URL=${SCORE_URL:-http://score-reverse-proxy:8888} 
 export KEYCLOAK_URL=${KEYCLOAK_URL:-https://keycloak:8443}
@@ -30,7 +29,6 @@ export CONTAINER_NAME=${CONTAINER_NAME:-overture-client}
 
 docker create -it --rm \
               --network $OVERTURE_NETWORK \
-              -e "ELASTICSEARCH_URL=$ELASTICSEARCH_URL" \
               -e "SONG_URL=$SONG_URL" \
               -e "SCORE_URL=$SCORE_URL" \
               -e "KEYCLOAK_URL=$KEYCLOAK_URL" \
