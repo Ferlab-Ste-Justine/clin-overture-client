@@ -15,6 +15,8 @@ import overturecli.song_calls as song_calls
 import overturecli.score_calls as score_calls
 import overturecli.store as store
 
+VERIFY_CERTIFICATES = os.environ.get("OVERTURE_CLI_VERIFY_CERTIFICATES", "true") == "true"
+
 
 def get_auth_token():
     env_token = os.environ.get('AUTH_TOKEN', None)
@@ -87,7 +89,8 @@ def keycloak_login(
             keycloak_realm='clin'
         ),
         'clin-proxy-api',
-        keycloak_secret
+        keycloak_secret,
+        VERIFY_CERTIFICATES
     ).login(
         keycloak_username, 
         keycloak_password

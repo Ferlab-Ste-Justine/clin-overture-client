@@ -3,7 +3,6 @@ import docker
 
 SCORE_CLIENT_IMAGE = os.environ['SCORE_CLIENT_IMAGE']
 CONTAINER_NAME = os.environ['CONTAINER_NAME']
-OVERTURE_NETWORK = os.environ['OVERTURE_NETWORK']
 
 def upload_files(
     upload_dir,
@@ -23,7 +22,7 @@ def upload_files(
             "METADATA_URL": song_url,
             "STORAGE_URL": score_url
         },
-        network=OVERTURE_NETWORK,
+        network_mode='host',
         command=["/score-client/score-client-dist/bin/score-client", "upload", "--manifest", manifest_path]
     )
 
@@ -45,6 +44,6 @@ def download_file(
             "METADATA_URL": song_url,
             "STORAGE_URL": score_url
         },
-        network=OVERTURE_NETWORK,
+        network_mode='host',
         command=["/score-client/score-client-dist/bin/score-client", "download", "--object-id", file_object_id, "--output-dir", download_dir]
     )

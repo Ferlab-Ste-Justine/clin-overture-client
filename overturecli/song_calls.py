@@ -5,6 +5,8 @@ import click
 
 from song import SongClient
 
+VERIFY_CERTIFICATES = os.environ.get("OVERTURE_CLI_VERIFY_CERTIFICATES", "true") == "true"
+
 def create_study(
     id,
     name,
@@ -15,7 +17,8 @@ def create_study(
 ):
     song_client = SongClient(
         song_url,
-        auth_token
+        auth_token,
+        VERIFY_CERTIFICATES
     )
     if not id in song_client.get_studies_list():
         song_client.create_study(
@@ -34,7 +37,8 @@ def create_analysis_definition(
 ):
     song_client = SongClient(
         song_url,
-        auth_token
+        auth_token,
+        VERIFY_CERTIFICATES
     )
         
     schemas = song_client.get_schemas()
@@ -46,7 +50,8 @@ def create_analysis_definition(
 def upload(studyId, payload, song_url, auth_token):
     song_client = SongClient(
         song_url,
-        auth_token
+        auth_token,
+        VERIFY_CERTIFICATES
     )
     response = song_client.create_custom_analysis(
         studyId,
@@ -65,7 +70,8 @@ def create_manifest(
     manifest_dir = os.path.join(upload_dir, 'manifests')
     song_client = SongClient(
         song_url,
-        auth_token
+        auth_token,
+        VERIFY_CERTIFICATES
     )
     manifest = song_client.get_analysis_manifest(
         study_id, 
@@ -83,13 +89,15 @@ def create_manifest(
 def get_analyses(study_id, status, song_url, auth_token):
     song_client = SongClient(
         song_url,
-        auth_token
+        auth_token,
+        VERIFY_CERTIFICATES
     )
     return song_client.get_analyses(study_id, status)
 
 def publish_analysis(study_id, analysis_id, song_url, auth_token):
     song_client = SongClient(
         song_url,
-        auth_token
+        auth_token,
+        VERIFY_CERTIFICATES
     )
     song_client.publish_analysis(study_id, analysis_id)
