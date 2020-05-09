@@ -1,0 +1,14 @@
+name: Build
+
+on: [push]
+
+jobs:
+  build:
+    name: Build Image
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Get overture sdk subrepo
+      run: git submodule init && git submodule update
+    - name: Ensure we can build the image
+      run: docker build -t test:test .

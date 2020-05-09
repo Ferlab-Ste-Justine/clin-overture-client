@@ -1,3 +1,8 @@
+"""
+This module abstracts away metadata processing details for the rest of the client logic
+"""
+#pylint: disable=R0801
+
 import copy
 import csv
 import json
@@ -24,21 +29,24 @@ def get_submission_files_metadata(upload_path, analysis_metadata):
     """
     return [
         schemas.FileMetadata().load({
-            **file_metadata, 
-            **get_file_metadata(os.path.join(upload_path, 'files', file_metadata['fileName'])), 
+            **file_metadata,
+            **get_file_metadata(os.path.join(upload_path, 'files', file_metadata['fileName'])),
             **{"fileAccess": "controlled", "studyId": analysis_metadata["studyId"]}
         }) for file_metadata in analysis_metadata['files']
     ]
 
 def integrate_metadata(files_metadata, analysis_metadata):
     """
-    Join the user supplied metadata, extra file metadata inferred from the filesystem and the extra sample
-    metadata inferred from clin into the structure which SONG expects to submit an analysis
+    Join the user supplied metadata, extra file metadata inferred from the filesystem and the extra
+    sample metadata inferred from clin into the structure which SONG expects to submit an analysis
     """
     analysis_metadata = copy.deepcopy(analysis_metadata)
     analysis_metadata['files'] = files_metadata
     return analysis_metadata
 
 def analysis_upload_to_json(upload_analysis):
+    """
+    Convert the analysis to upload from a dictionary to JSON, using the validator to convert
+    types.
+    """
     return schemas.UploadClinReadAlignmentAnalysis().dumps(upload_analysis)
-

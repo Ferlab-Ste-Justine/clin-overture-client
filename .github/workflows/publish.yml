@@ -1,0 +1,19 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  publish:
+    name: Publish Image
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Log into registry
+      run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u chusj --password-stdin
+    - name: Get overture sdk subrepo
+      run: git submodule init && git submodule update
+    - name: Publish the image
+      run: ./push_image.sh

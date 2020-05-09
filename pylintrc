@@ -1,0 +1,3 @@
+# https://github.com/PyCQA/pylint/issues/214
+[SIMILARITIES]
+min-similarity-lines=10

@@ -1,0 +1,23 @@
+name: Lint
+
+on: [push]
+
+jobs:
+  install:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Get overture sdk subrepo
+      run: git submodule init && git submodule update
+    - name: Install Overture SDK
+      run: (cd overture-python-sdk; python setup.py install)
+    - name: Install Overture Client
+      run: python setup.py install
+    - name: Install Pylint
+      run: pip install pylint==2.5.2
+    - name: Run Pylint On Overture Client Package
+      run: pylint overturecli
