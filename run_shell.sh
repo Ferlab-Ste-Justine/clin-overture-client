@@ -24,6 +24,9 @@ fi
 export SONG_URL=${SONG_URL:-http://localhost:10000}
 export SCORE_URL=${SCORE_URL:-http://localhost:10001} 
 export KEYCLOAK_URL=${KEYCLOAK_URL:-https://localhost:8443}
+export KEYCLOAK_SECRET=${KEYCLOAK_SECRET-01b99f28-1331-4fec-903b-c2e8043cec77}
+export KEYCLOAK_USERNAME=${KEYCLOAK_USERNAME-test}
+export KEYCLOAK_PASSWORD=${KEYCLOAK_PASSWORD-testpassword99}
 export MAIN_STUDY=${MAIN_STUDY:-ET00011}
 export SCORE_CLIENT_IMAGE=${SCORE_CLIENT_IMAGE:-chusj/score-client:0.4}
 export CONTAINER_NAME=${CONTAINER_NAME:-overture-client}
@@ -33,9 +36,9 @@ docker run -it --rm \
            -e "SONG_URL=$SONG_URL" \
            -e "SCORE_URL=$SCORE_URL" \
            -e "KEYCLOAK_URL=$KEYCLOAK_URL" \
-           -e "KEYCLOAK_USERNAME=test" \
-           -e "KEYCLOAK_PASSWORD=testpassword99" \
-           -e "KEYCLOAK_SECRET=01b99f28-1331-4fec-903b-c2e8043cec77" \
+           -e "KEYCLOAK_USERNAME=$KEYCLOAK_USERNAME" \
+           -e "KEYCLOAK_PASSWORD=$KEYCLOAK_PASSWORD" \
+           -e "KEYCLOAK_SECRET=$KEYCLOAK_SECRET" \
            -e "SCORE_CLIENT_IMAGE=$SCORE_CLIENT_IMAGE" \
            -e "CONTAINER_NAME=$CONTAINER_NAME" \
            -e "MAIN_STUDY=$MAIN_STUDY" \
